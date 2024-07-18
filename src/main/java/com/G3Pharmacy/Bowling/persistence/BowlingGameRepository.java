@@ -9,7 +9,4 @@ import java.util.List;
 
 @Repository
 public interface BowlingGameRepository extends CrudRepository<BowlingGame, Long>{
-
-    List<BowlingGame> findAll();
-
 }

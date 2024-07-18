@@ -1,5 +1,7 @@
 package com.G3Pharmacy.Bowling.entities;
 
+import com.G3Pharmacy.Bowling.service.RollsConverterService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +15,7 @@ import java.util.Arrays;
 @Table(name = "bowling_games")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class BowlingGame {
 
     @Id
@@ -21,7 +24,7 @@ public class BowlingGame {
 
     private String name;
 
-    @ElementCollection
+    @Convert(converter = RollsConverterService.class)
     private int[] rolls = new int[21];
 
 }
