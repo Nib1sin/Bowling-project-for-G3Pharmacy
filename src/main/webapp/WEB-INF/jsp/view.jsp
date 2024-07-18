@@ -9,8 +9,11 @@
     <h1>All Bowling Games</h1>
     <ul>
         <c:forEach var="game" items="${games}">
-            <li>${game.name}: ${game.rolls}</li>
+            <li>${game.name}: ${game.rolls} - Score: ${game.score}</li>
         </c:forEach>
     </ul>
+    <br>
+    <a href="/home">Back to Home</a>
+
 </body>
 </html>
