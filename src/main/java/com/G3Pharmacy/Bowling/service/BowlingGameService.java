@@ -26,9 +26,5 @@ public class BowlingGameService implements IBowlingGameService {
         bowlingGameRepository.save(bowlingGame);
     }
 
-    @Override
-    public List<BowlingGame> findByIdCourse(Long idCourse) {
-        return (List<BowlingGame>) bowlingGameRepository.findAllStudents(idCourse);
-    }
 
 }

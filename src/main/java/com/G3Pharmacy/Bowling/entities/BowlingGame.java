@@ -10,7 +10,7 @@ import java.util.Arrays;
 @Data
 @Entity
 @Builder
-@Table(name = "students")
+@Table(name = "bowling_games")
 @AllArgsConstructor
 @NoArgsConstructor
 public class BowlingGame {

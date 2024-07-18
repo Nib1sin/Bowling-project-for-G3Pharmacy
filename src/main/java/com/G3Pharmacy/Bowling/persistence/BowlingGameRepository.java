@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface BowlingGameRepository extends CrudRepository<BowlingGame, Long>{
 
-    @Query("SELECT s FROM Student s WHERE s.courseId = :idCourse")
-    List<BowlingGame> findAllStudents(Long idCourse);
+    List<BowlingGame> findAll();
 
 }

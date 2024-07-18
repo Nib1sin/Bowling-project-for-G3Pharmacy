@@ -12,5 +12,4 @@ public interface IBowlingGameService {
 
     void save(BowlingGame bowlingGame);
 
-    List<BowlingGame> findByIdCourse(Long idCourse);
 }
