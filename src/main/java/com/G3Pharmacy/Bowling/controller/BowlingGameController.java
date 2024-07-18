@@ -53,22 +53,20 @@ public class BowlingGameController {
         return Arrays.toString(rolls);
     }
 
-
     @GetMapping("/search/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.findById(id));
+    public ResponseEntity<BowlingGame> findById(@PathVariable Long id) {
+        BowlingGame game = service.findById(id);
+        if (game != null) {
+            return ResponseEntity.ok(game);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
     @GetMapping("/create")
     public String showCreateForm() {
         return "create";
     }
-
-    @GetMapping("/")
-    public String index() {
-        return "index";
-    }
-
 
     public static class BowlingGameDto {
         private Long id;
@@ -93,5 +91,4 @@ public class BowlingGameController {
             return rolls;
         }
     }
-
 }
