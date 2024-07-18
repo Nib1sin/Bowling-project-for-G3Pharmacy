@@ -1,7 +1,6 @@
 package com.G3Pharmacy.Bowling.service;
 
 import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

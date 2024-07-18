@@ -5,11 +5,15 @@ import com.G3Pharmacy.Bowling.service.BowlingGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController
+@Controller
 @RequestMapping("/api/bowling")
 public class BowlingGameController {
 
@@ -18,19 +22,76 @@ public class BowlingGameController {
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createGame(@RequestBody BowlingGame game) {
+    public String createGame(@RequestParam String name, @RequestParam String rolls) {
+        BowlingGame game = new BowlingGame();
+        game.setName(name);
+        game.setRolls(convertRollsStringToArray(rolls));
         service.save(game);
+        return "redirect:/api/bowling/all";
+    }
+
+    private int[] convertRollsStringToArray(String rolls) {
+        String[] rollStrings = rolls.split(",");
+        int[] rollArray = new int[rollStrings.length];
+        for (int i = 0; i < rollStrings.length; i++) {
+            rollArray[i] = Integer.parseInt(rollStrings[i].trim());
+        }
+        return rollArray;
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> findAllStudent(){
-        return ResponseEntity.ok(service.findAll());
+    public String findAllGames(Model model){
+        List<BowlingGame> games = service.findAll();
+        List<BowlingGameDto> gameDtos = games.stream()
+                .map(game -> new BowlingGameDto(game.getId(), game.getName(), arrayToString(game.getRolls())))
+                .collect(Collectors.toList());
+        model.addAttribute("games", gameDtos);
+        return "view";
     }
+
+    private String arrayToString(int[] rolls) {
+        return Arrays.toString(rolls);
+    }
+
 
     @GetMapping("/search/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    @GetMapping("/create")
+    public String showCreateForm() {
+        return "create";
+    }
+
+    @GetMapping("/")
+    public String index() {
+        return "index";
+    }
+
+
+    public static class BowlingGameDto {
+        private Long id;
+        private String name;
+        private String rolls;
+
+        public BowlingGameDto(Long id, String name, String rolls) {
+            this.id = id;
+            this.name = name;
+            this.rolls = rolls;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getRolls() {
+            return rolls;
+        }
+    }
 
 }
