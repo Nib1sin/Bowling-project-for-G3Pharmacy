@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +33,8 @@ public class BowlingGameController {
 
         List<BowlingGame> games = service.findAll();
         List<BowlingGameDto> gameDtos = games.stream()
-                .map(g -> new BowlingGameDto(g.getId(), g.getName(), arrayToString(g.getRolls()), getScore(g)))
+                //.map(g -> new BowlingGameDto(g.getId(), g.getName(), arrayToString(g.getRolls()), getScore(g)))
+                .map(g -> new BowlingGameDto(g.getId(), g.getName(), formatRolls(g.getRolls()), getScore(g)))
                 .collect(Collectors.toList());
         model.addAttribute("games", gameDtos);
         return "view";
@@ -51,10 +53,37 @@ public class BowlingGameController {
     public String findAllGames(Model model){
         List<BowlingGame> games = service.findAll();
         List<BowlingGameDto> gameDtos = games.stream()
-                .map(game -> new BowlingGameDto(game.getId(), game.getName(), arrayToString(game.getRolls()), getScore(game)))
+                //.map(game -> new BowlingGameDto(game.getId(), game.getName(), arrayToString(game.getRolls()), getScore(game)))
+                .map(game -> new BowlingGameDto(game.getId(), game.getName(), formatRolls(game.getRolls()), getScore(game)))
                 .collect(Collectors.toList());
         model.addAttribute("games", gameDtos);
         return "view";
+    }
+
+    private List<int[]> formatRolls(int[] rolls) {
+        List<int[]> formattedRolls = new ArrayList<>();
+        for (int i = 0; i < rolls.length; ) {
+            if (rolls[i] == 10) { // strike
+                if (formattedRolls.size() == 9) {
+                    // Last frame special handling
+                    formattedRolls.add(new int[]{rolls[i], rolls[i + 1], rolls[i + 2]});
+                    break;
+                } else {
+                    formattedRolls.add(new int[]{rolls[i]});
+                    i++;
+                }
+            } else {
+                if (formattedRolls.size() == 9) {
+                    // Last frame special handling
+                    formattedRolls.add(new int[]{rolls[i], rolls[i + 1], rolls[i + 2]});
+                    break;
+                } else {
+                    formattedRolls.add(new int[]{rolls[i], rolls[i + 1]});
+                    i += 2;
+                }
+            }
+        }
+        return formattedRolls;
     }
 
     private String arrayToString(int[] rolls) {
@@ -84,10 +113,11 @@ public class BowlingGameController {
     public static class BowlingGameDto {
         private Long id;
         private String name;
-        private String rolls;
+        //private String rolls;
+        private List<int[]> rolls;
         private int score;
 
-        public BowlingGameDto(Long id, String name, String rolls, int score) {
+        public BowlingGameDto(Long id, String name, List<int[]> rolls, int score) {
             this.id = id;
             this.name = name;
             this.rolls = rolls;
@@ -102,7 +132,13 @@ public class BowlingGameController {
             return name;
         }
 
+        /*
         public String getRolls() {
+            return rolls;
+        }
+        */
+
+        public List<int[]> getRolls() {
             return rolls;
         }
 
