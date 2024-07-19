@@ -19,7 +19,7 @@
                     ]<c:if test="${!frameStatus.last}">, </c:if>
                 </c:forEach>
                 <br>
-                -> Score: ${game.score}
+                == Score: ${game.score}
             </li>
         </c:forEach>
     </ul>

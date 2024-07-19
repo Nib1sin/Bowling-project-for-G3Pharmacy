@@ -70,7 +70,6 @@
         </c:forEach>
 
         <!-- Last frame logic -->
-        <h2>Frame 10</h2>
         <div class="frame-row">
             <label>Frame 10 - Roll 1:</label>
             <input type="number" id="frame10roll1" name="frame10roll1" min="0" max="10" required
