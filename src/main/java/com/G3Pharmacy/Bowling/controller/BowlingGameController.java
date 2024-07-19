@@ -22,39 +22,45 @@ public class BowlingGameController {
     @Autowired
     private BowlingGameService service;
 
-
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public String createGame(@RequestParam String name, @RequestParam String rolls, Model model) {
+    public String createGame(@RequestParam String name,
+                             @RequestParam int frame1roll1, @RequestParam(required = false) Integer frame1roll2,
+                             @RequestParam int frame2roll1, @RequestParam(required = false) Integer frame2roll2,
+                             @RequestParam int frame3roll1, @RequestParam(required = false) Integer frame3roll2,
+                             @RequestParam int frame4roll1, @RequestParam(required = false) Integer frame4roll2,
+                             @RequestParam int frame5roll1, @RequestParam(required = false) Integer frame5roll2,
+                             @RequestParam int frame6roll1, @RequestParam(required = false) Integer frame6roll2,
+                             @RequestParam int frame7roll1, @RequestParam(required = false) Integer frame7roll2,
+                             @RequestParam int frame8roll1, @RequestParam(required = false) Integer frame8roll2,
+                             @RequestParam int frame9roll1, @RequestParam(required = false) Integer frame9roll2,
+                             @RequestParam int frame10roll1, @RequestParam(required = false) Integer frame10roll2,
+                             @RequestParam(required = false) Integer frame10roll3,
+                             Model model) {
         BowlingGame game = new BowlingGame();
         game.setName(name);
-        game.setRolls(convertRollsStringToArray(rolls));
+
+        List<Integer> rolls = new ArrayList<>();
+        rolls.add(frame1roll1); rolls.add(frame1roll2 != null ? frame1roll2 : 0);
+        rolls.add(frame2roll1); rolls.add(frame2roll2 != null ? frame2roll2 : 0);
+        rolls.add(frame3roll1); rolls.add(frame3roll2 != null ? frame3roll2 : 0);
+        rolls.add(frame4roll1); rolls.add(frame4roll2 != null ? frame4roll2 : 0);
+        rolls.add(frame5roll1); rolls.add(frame5roll2 != null ? frame5roll2 : 0);
+        rolls.add(frame6roll1); rolls.add(frame6roll2 != null ? frame6roll2 : 0);
+        rolls.add(frame7roll1); rolls.add(frame7roll2 != null ? frame7roll2 : 0);
+        rolls.add(frame8roll1); rolls.add(frame8roll2 != null ? frame8roll2 : 0);
+        rolls.add(frame9roll1); rolls.add(frame9roll2 != null ? frame9roll2 : 0);
+        rolls.add(frame10roll1); rolls.add(frame10roll2 != null ? frame10roll2 : 0);
+        if (frame10roll3 != null) {
+            rolls.add(frame10roll3);
+        }
+
+        game.setRolls(rolls.stream().mapToInt(i -> i).toArray());
         service.save(game);
 
         List<BowlingGame> games = service.findAll();
         List<BowlingGameDto> gameDtos = games.stream()
-                //.map(g -> new BowlingGameDto(g.getId(), g.getName(), arrayToString(g.getRolls()), getScore(g)))
                 .map(g -> new BowlingGameDto(g.getId(), g.getName(), formatRolls(g.getRolls()), getScore(g)))
-                .collect(Collectors.toList());
-        model.addAttribute("games", gameDtos);
-        return "view";
-    }
-
-    private int[] convertRollsStringToArray(String rolls) {
-        String[] rollStrings = rolls.replaceAll("[\\[\\]]", "").split(",");
-        int[] rollArray = new int[rollStrings.length];
-        for (int i = 0; i < rollStrings.length; i++) {
-            rollArray[i] = Integer.parseInt(rollStrings[i].trim());
-        }
-        return rollArray;
-    }
-
-    @GetMapping("/all")
-    public String findAllGames(Model model){
-        List<BowlingGame> games = service.findAll();
-        List<BowlingGameDto> gameDtos = games.stream()
-                //.map(game -> new BowlingGameDto(game.getId(), game.getName(), arrayToString(game.getRolls()), getScore(game)))
-                .map(game -> new BowlingGameDto(game.getId(), game.getName(), formatRolls(game.getRolls()), getScore(game)))
                 .collect(Collectors.toList());
         model.addAttribute("games", gameDtos);
         return "view";
@@ -86,13 +92,19 @@ public class BowlingGameController {
         return formattedRolls;
     }
 
-    private String arrayToString(int[] rolls) {
-        return Arrays.toString(rolls);
-    }
-
     private int getScore(BowlingGame game) {
         BowlingGameRollService rollService = new BowlingGameRollService(game);
         return rollService.score();
+    }
+
+    @GetMapping("/all")
+    public String findAllGames(Model model){
+        List<BowlingGame> games = service.findAll();
+        List<BowlingGameDto> gameDtos = games.stream()
+                .map(game -> new BowlingGameDto(game.getId(), game.getName(), formatRolls(game.getRolls()), getScore(game)))
+                .collect(Collectors.toList());
+        model.addAttribute("games", gameDtos);
+        return "view";
     }
 
     @GetMapping("/search/{id}")
@@ -113,7 +125,6 @@ public class BowlingGameController {
     public static class BowlingGameDto {
         private Long id;
         private String name;
-        //private String rolls;
         private List<int[]> rolls;
         private int score;
 
@@ -131,12 +142,6 @@ public class BowlingGameController {
         public String getName() {
             return name;
         }
-
-        /*
-        public String getRolls() {
-            return rolls;
-        }
-        */
 
         public List<int[]> getRolls() {
             return rolls;
