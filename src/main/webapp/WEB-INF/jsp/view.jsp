@@ -23,5 +23,7 @@
             </li>
         </c:forEach>
     </ul>
+    <br>
+    <a href="/home">Back to Home</a>
 </body>
 </html>
